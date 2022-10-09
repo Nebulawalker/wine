@@ -8,30 +8,35 @@ from pandas import read_excel
 
 from collections import defaultdict
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
 
-template = env.get_template('template.html')
+def main():
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
 
-df_wines = read_excel("wine.xlsx", keep_default_na=False)
+    template = env.get_template('template.html')
 
-wines = df_wines.to_dict(orient="records")
+    df_wines = read_excel("wine.xlsx", keep_default_na=False)
 
-sorted_wines = defaultdict(list)
+    wines = df_wines.to_dict(orient="records")
 
-for wine in wines:
-    sorted_wines[wine['Категория']].append(wine)
+    sorted_wines = defaultdict(list)
+
+    for wine in wines:
+        sorted_wines[wine['Категория']].append(wine)
+
+    rendered_page = template.render(
+        company_age=f"Уже {get_company_age()} с вами",
+        sorted_wines=sorted_wines,
+    )
+
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
+
+    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
 
-rendered_page = template.render(
-    company_age=f"Уже {get_company_age()} с вами",
-    sorted_wines=sorted_wines,
-)
-
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
-
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+if __name__ == '__main__':
+    main()
