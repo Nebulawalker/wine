@@ -2,7 +2,9 @@ import datetime
 
 
 COMPANY_FOUNDATION_YEAR = 1920
-def company_age():
+
+
+def get_company_age():
     current_year = datetime.datetime.now().year
     delta = current_year - COMPANY_FOUNDATION_YEAR
 
@@ -14,5 +16,5 @@ def company_age():
         ending = "года"
     else:
         ending = "лет"
-    result = f"{delta} {ending}"
-    return result
+    company_age = f"{delta} {ending}"
+    return company_age
