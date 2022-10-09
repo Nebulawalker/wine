@@ -2,7 +2,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from datetime_helpers import company_age
+from datetime_helpers import get_company_age
 
 from pandas import read_excel
 
@@ -26,7 +26,7 @@ for wine in wines:
 
 
 rendered_page = template.render(
-    company_age=f"Уже {company_age()} с вами",
+    company_age=f"Уже {get_company_age()} с вами",
     sorted_wines=sorted_wines,
 )
 
