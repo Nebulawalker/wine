@@ -8,6 +8,8 @@ from pandas import read_excel
 
 from collections import defaultdict
 
+import argparse
+
 
 def main():
     env = Environment(
@@ -17,7 +19,21 @@ def main():
 
     template = env.get_template('template.html')
 
-    df_wines = read_excel("wine.xlsx", keep_default_na=False)
+    parser = argparse.ArgumentParser(
+        description='Скрипт запускает сайт магазина авторского\
+            вина "Новое русское вино".\
+            Данные о товарах по умолчанию выгружаются из файла wine.xlsx,\
+            либо можно указать свой файл.'
+    )
+    parser.add_argument(
+        '-p', '--path',
+        help='Путь до файла с продукцией',
+        default='wine.xlsx',
+        type=str
+    )
+    path_to_wines_file = parser.parse_args().path
+
+    df_wines = read_excel(path_to_wines_file, keep_default_na=False)
 
     wines = df_wines.to_dict(orient="records")
 
@@ -27,7 +43,7 @@ def main():
         sorted_wines[wine['Категория']].append(wine)
 
     rendered_page = template.render(
-        company_age=f"Уже {get_company_age()} с вами",
+        company_age=f'Уже {get_company_age()} с Вами',
         sorted_wines=sorted_wines,
     )
 
